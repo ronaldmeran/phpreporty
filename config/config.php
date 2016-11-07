@@ -9,6 +9,8 @@
   | @author Ronald Meran
  */
 
+define('APP_ROOT', realpath(__DIR__ . '/..'));
+
 return array(
 	/*
      * The root directory of all the reports created
@@ -32,6 +34,12 @@ return array(
 		'ado'=>'Ado',
 		'pivot'=>'AdoPivot',
 	),
+
+	//turns on app debug, set to true to display php/application error
+	'app_debug' => true,
+
+	//gets the template directory
+	'template_dir' => APP_ROOT.'/templates/default/html/',
 
 	//this enables listing different types of download formats on the report page
 	//to change that one can add or remove any format from the list below
