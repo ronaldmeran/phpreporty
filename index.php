@@ -1,24 +1,25 @@
 <?php
-$db = new PDO('mysql:host=localhost;dbname=topdraw', 'root', '1qaz2wsx', array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'")); 
 
-$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//sets up autoloading of composer dependencies
+include 'vendor/autoload.php';
 
+// Sets up main class for PHP
+require 'libraries/PhpReporty/PhpReporty.php';
 
-// Get all the tables in the database
-$getmenu = "show tables";
+// Initialize application
+$phpreporty = PhpReporty::init();
 
-$stmt = $db->prepare($getmenu);
-$stmt->execute();
+// Application
+$app = $phpreporty->app;
 
-echo "<select name='tables'>";
+// Configurations
+$config = $phpreporty->config;
 
-foreach ($stmt as $tables){
-	foreach($tables as $t)
-    	echo "<option>".$t."</option>"; 
-}
-echo "</select>";
+// Include routers
+$app->get('/', function() use ($app) {
+	return PhpReporty::default_page();
+});
 
-exit;
+$app->run();
 
 ?>
