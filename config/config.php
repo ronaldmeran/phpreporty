@@ -61,7 +61,7 @@ return array(
 	),
 
 	//this enebales one to change the default bootstrap theme
-	'bootstrap_theme' => 'default',
+	'bootstrap_theme' => 'cosmo',
 
 	//this list all the available themes for a user to switch and use the one he or she likes
 	//once removed the theme will not appear in the dropdown
@@ -71,11 +71,18 @@ return array(
 	    'amelia', 'cerulean', 'cosmo', 'cyborg', 'flatly', 'journal', 'readable', 'simplex', 'slate', 'spacelab', 'united'
 	),
 
+	//sets the active environment
+	'active_environment' => 'default',
+
+	//sets the driver
+	'default_driver' => 'pdo',
+
 	//this defines the database environments
-	//the keys are the environment names (e.g. "dev", "production")
+	//the keys are the environment names (e.g. "default", "production")
 	//the values are arrays that contain connection info
 	'environments' => array(
-		'main'=>array(
+
+		'default' => array(
 			// Supports AdoDB connections
 			'ado'=>array(
 				'uri'=>'mysql://username:password@localhost/database'
@@ -83,9 +90,16 @@ return array(
 
 			// Supports and PDO database
 			'pdo'=>array(
-				'dsn'=>'mysql:host=localhost;dbname=test',
-				'user'=>'readonly',
-				'pass'=>'password',
+				'dsn'=>'mysql:host=localhost;dbname=topdraw',
+				'hostname' => 'localhost',
+				'username' => 'root',
+				'password' => '1qaz2wsx',
+				'database' => 'topdraw',
+				'dbdriver' => 'pdo_mysql',
+				'dbprefix' => 'dbprefix',
+				'char_set' => 'utf8mb4',
+				'port' => '3306',
+				'path' => '',
 			),
 
 			// Supports MongoDB
