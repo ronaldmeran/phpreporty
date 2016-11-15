@@ -4,7 +4,7 @@
  * Configuration Settings for the database connection
  * 
  * @author: Ronald M. Meran
- * @copyright: 2016 November Aremem
+ * @copyright: 2016 November PHPReporty
  */
  
 class Database {

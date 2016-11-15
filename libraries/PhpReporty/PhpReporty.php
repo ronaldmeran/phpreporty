@@ -17,6 +17,7 @@ class PhpReporty {
 	public static $app;
 	public static $config;
 	protected static $conn;
+	protected static $sm;
 
 	 /**
      * Instantiate a PHPReporty
@@ -35,6 +36,9 @@ class PhpReporty {
 
 		// Set debug
 		self::set_debug();
+
+		// Set schema manager
+		self::set_schema_manager();
 
 		// Return
 		return (object) array(
@@ -58,7 +62,20 @@ class PhpReporty {
 	}
 
 	/**
-     * Sets the default configuratio file
+     * Set Schema Manager
+     *
+     * Sets the schema manager
+     *
+     * @param null
+     */
+	public static function set_schema_manager() 
+	{
+		// Set schema manager
+		self::$sm = self::$conn['dbs'][self::$config['default_driver']]->getSchemaManager();
+	}
+
+	/**
+     * Sets the default configuration file
      *
      * Default page for PHPReporty
      *
@@ -84,8 +101,16 @@ class PhpReporty {
      */
 	public static function default_page() 
 	{
+		$data = array(
+			'reportCategory' => array(
+				'simple_report'	=> 'Simple Report', 
+				'customized' => 'Customized Report',
+				'chart' => 'Charts / Graph'
+			)
+		);
+
 		// Get the template
-		$template = self::render('report_list', array('test' => 1));
+		$template = self::render('report_list', $data);
 
 		return $template;
 	}
@@ -114,9 +139,88 @@ class PhpReporty {
      * @param array $param Additional parameters in the report
      * @return array $report Generated sql table result
      */
-	public static function createReport($reportType='', $reportData=array(), $param=array()) 
+	public function createReport($reportType='', $reportData=array(), $param=array()) 
 	{
-		return 'Report Created! You can modify and edit the report here.';
+		echo 'Report Created! You can modify and edit the report here.----';
+		exit;
+	}
+
+	/**
+     * Get the table list
+     *
+     * @param void
+     * @return array
+     */
+	public function getTableList()
+	{
+		// Get list of tables
+   		return self::$sm->listTables();
+	}
+
+	/**
+     * Get the table array
+     *
+     * @param void
+     * @return array
+     */
+	public function getTables()
+	{
+		// Get list of tables
+   		$tb = self::getTableList();
+
+		foreach ($tb as $key => $table)
+			$tb[$key] = $table->getName();
+
+		return $tb;
+	}
+
+	/**
+     * Get the column names in the table
+     *
+     * @param string $table Name of the table
+     * @return array
+     */
+	public function getFieldList($table='')
+	{
+		return self::$sm->listTableColumns($table);
+	}
+
+	/**
+     * Get the table array
+     *
+     * @param string $table Name of the table
+     * @return array
+     */
+	public function getFields($table='')
+	{
+		// Initialize array
+		$cols = array();
+
+		// Get list of tables
+   		$col = self::getFieldList($table);
+
+		foreach ($col as $key => $column){
+			$cols[$key]['name'] = $column->getName();
+			$cols[$key]['type'] = $column->getType();
+		}
+
+		return $cols;
+	}
+
+	/**
+     * Get the table array
+     *
+     * @param string $table Name of the table
+     * @return array
+     */
+	public function index()
+	{
+		$data = array(
+			'dbtables' => self::getTables(),
+			'dbfields' => self::getFields()
+		);
+
+		return self::render('dbsuccess', $data); 
 	}
 
 	/**

@@ -24,6 +24,19 @@ $app->get('/db/{id}', function($id) use ($app) {
 	return PhpReporty::db_page_test($id);
 });
 
+$app->get('/fields/{table}', function($table) use ($app) {
+	return PhpReporty::getFields($table);
+});
+
+$app->get('/test', function($table) use ($app) {
+	return PhpReporty::index($table);
+});
+
+$app->get('/simple_report', function() use ($app) {
+	return PhpReporty::simple_report();
+});
+
+
 $app->run();
 
 ?>
