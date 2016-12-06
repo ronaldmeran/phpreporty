@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>My Reports</title>
+</head>
+<body> 
+	<form action='generatereport' method='post'>
+		<div>
+		<label>Main Table: </label>
+		<select name="table_name">
+			<option>---</option>
+			{% for key,value in dbtables %}
+				<option>{{ value }}</option>
+			{% endfor %}
+		</select>
+		<!-- <input type='text' name='table_name'> -->
+		</div>
+		<div>
+		<label>Fields: </label>
+		<input type='text' name='selector'>
+		</div>
+		<div>
+		<label>Where: </label>
+		<input type='text' name='field'> = <input type='text' name='selectedfield'>
+		</div> 
+		<input type='submit' name='submit' value='Submit'>
+	</form>
+</body>
+</html>

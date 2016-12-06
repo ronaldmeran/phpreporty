@@ -1,0 +1,21 @@
+<html>
+<head>
+<title>My Reports</title>
+</head>
+<body>     
+	<table border='1' width='100%'">
+		<thead> 
+			{% for key, row in table_columns %}  
+				<th align='center'>{{ key|e }}</th>  
+			{% endfor %}
+		</thead>
+		<tbody>  
+			<tr> 
+			{% for key,value in table_fields %} 
+				<td align='center'>{{ value|e }}</td>
+			{% endfor %} 
+			</tr> 
+		</tbody>
+	</table> 
+</body>
+</html>

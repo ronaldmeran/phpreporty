@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>Step 1</title>
+</head>
+<body> 
+	<form action='step2' method='POST'>   
+		<h1>Step 1 - Select Main Table and Join Tables</h1>
+		<div>
+			<label>Main Table: </label>
+			<select name="table_name" id="main_table" required>
+				<option value=''>---</option>
+				{% for key,value in dbtables %}
+					<option>{{ value }}</option>
+				{% endfor %}
+			</select>
+		</div>  
+		<div> 
+			<label>Join Type: </label>
+			<select name='join_type[]' id="join_tables">
+				<option value=''>---</option>
+				<option value='INNER JOIN'>Inner Join</option>
+				<option value='LEFT JOIN'>Left Join</option>
+				<option value='RIGHT JOIN'>Right Join</option>
+				<option value='FULL JOIN'>Full Join</option> 
+			</select> 
+			<label>Join Table: </label> 
+			<select name="join_table[]" >
+				<option value=''>---</option>
+				{% for key,value in dbtables %}
+					<option>{{ value }}</option>
+				{% endfor %}
+			</select>
+			<label>Field from Main Table: </label> 
+			<select name="join_data[]" class="on_main_table" >
+				<option value='*'>---</option> 
+			</select> 
+			<label>Field from Join Table: </label> 
+			<select name="join_data[]" class="on_join_table" >
+				<option value='*'>---</option>
+			</select>
+			<input type='button' id='insert-more' value='Add Join Table'> 
+		</div> 	
+		<div id='joins'>
+		</div>
+		<input type='submit' name='submit' value='Next'> 
+		<button onclick="history.go(-1);">Back </button>
+	</form>
+</body>
+</html>   
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>  
+
+		$(document).ready(function(){ 
+			$('#main_table').on('change', function(){ 
+				var mainTableVal = $(this).val();
+				$.ajax({
+					url : 'http://localhost/phpreporty_merged/getTableFields',
+					method : 'POST', 
+					data :  { "table": mainTableVal },
+					dataType : 'json',
+					success: function(data){ 
+						obj  = JSON.parse(data);
+						console.log(obj);
+
+					 	$('.on_main_table').children().remove();
+					 	$('.on_main_table' ).prepend( "<option value=''>---</option>" );
+					 	$.each(data, function(i, field) {
+                    	$('.on_main_table').append($('<option>', {value:field, text:field} ));
+		                });  
+				 		$('.on_join_table').children().remove();
+				 		$('.on_join_table' ).prepend( "<option value=''>---</option>" );
+				 		$.each(data, function(i, field) {
+	                    $('.on_join_table').append($('<option>', {value:field, text:field} ));
+		                });   
+					},
+					error: function(data){
+						console.log(data);
+					} 
+				});  
+			}); 
+		}); 
+
+		var valindex = 0;
+		$("#insert-more").on('click',function () { 
+		     $("#joins").html(function () {  
+		     		 valindex = valindex + 1; 
+		     		 console.log(valindex);
+		             $(this).append('<label>Join Type: </label><select name="join_data['+valindex+'][]"><option>---</option><option value="INNER JOIN">Inner Join</option><option value="LEFT JOIN">Left Join</option><option value="RIGHT JOIN">Right Join</option><option value="FULL JOIN">Full Join</option>', '<label> Join Table: </label><select name="join_data['+valindex+'][]"><option>---</option>{% for key,value in dbtables %}<option>{{ value }}</option>{% endfor %}</select><label> Field from Main Table: </label><select name="join_data['+valindex+'][]" class="on_main_table"><option value="">---</option></select><label> Field from Join Table: </label><select name="join_data['+valindex+'][]" class="on_join_table"><option value="">---</option></select> <input type="button" id="remCF" value="Remove Join Table"> </br>');  
+		     });
+		}); 
+	</script> 
