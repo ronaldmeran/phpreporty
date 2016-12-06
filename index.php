@@ -1,7 +1,13 @@
 <?php
 
 //sets up autoloading of composer dependencies
-include 'vendor/autoload.php';
+$config = 'vendor/autoload.php';
+
+// Validate if file exists
+if(!file_exists($config))
+	throw new Exception("Cannot find autoload.php. Please make sure that you run composer install.");
+else
+	include $config;
 
 // Require phpreport class
 require('classes/Bootstrap.php');
