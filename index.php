@@ -38,10 +38,25 @@ $app->get('/test', function($table) use ($app) {
 	return PhpReporty::index($table);
 });
 
-$app->get('/simple_report', function() use ($app) {
-	return PhpReporty::simple_report();
+$app->get('create_report/{reportType}', function($reportType) use ($app) {
+	return Reports::createReport($reportType);
 });
 
+$app->get('/charts', function() use ($app) {
+	return PhpReporty::charts();
+});
+
+$app->get('/generateData', function() use ($app) {
+	return PhpReporty::generateData();
+});
+
+$app->get('/testreport', function() use ($app) {
+	return Reports::index();
+});
+
+$app->post('/getTableFields', function() use ($app) {
+	return Reports::getTableFields();
+});
 
 $app->run();
 

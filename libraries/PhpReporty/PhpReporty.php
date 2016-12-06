@@ -12,12 +12,14 @@
 use Symfony\Component\HttpKernel\Debug\ErrorHandler;
 use Symfony\Component\HttpKernel\Debug\ExceptionHandler;
 
-class PhpReporty {
-	
+class PhpReporty 
+{	
 	public static $app;
 	public static $config;
 	protected static $conn;
 	protected static $sm;
+	protected static $query;
+	protected static $dbal;
 
 	 /**
      * Instantiate a PHPReporty
@@ -37,8 +39,14 @@ class PhpReporty {
 		// Set debug
 		self::set_debug();
 
+		// Set DBAL
+		self::set_dbal();
+
 		// Set schema manager
 		self::set_schema_manager();
+
+		// Set query builder
+		self::set_query_builder();
 
 		// Return
 		return (object) array(
@@ -68,10 +76,36 @@ class PhpReporty {
      *
      * @param null
      */
+	public static function set_dbal() 
+	{
+		// Set schema manager
+		self::$dbal = self::$conn['dbs'][self::$config['default_driver']];
+	}
+
+	/**
+     * Set Schema Manager
+     *
+     * Sets the schema manager
+     *
+     * @param null
+     */
 	public static function set_schema_manager() 
 	{
 		// Set schema manager
-		self::$sm = self::$conn['dbs'][self::$config['default_driver']]->getSchemaManager();
+		self::$sm = self::$dbal->getSchemaManager();
+	}
+
+	/**
+     * Set Schema Manager
+     *
+     * Sets the schema manager
+     *
+     * @param null
+     */
+	public static function set_query_builder() 
+	{
+		// Set schema manager
+		self::$query = self::$dbal->createQueryBuilder();
 	}
 
 	/**
@@ -103,7 +137,7 @@ class PhpReporty {
 	{
 		$data = array(
 			'reportCategory' => array(
-				'simple_report'	=> 'Simple Report', 
+				'simple'	=> 'Simple Report', 
 				'customized' => 'Customized Report',
 				'chart' => 'Charts / Graph'
 			)
@@ -113,36 +147,6 @@ class PhpReporty {
 		$template = self::render('report_list', $data);
 
 		return $template;
-	}
-
-	/**
-     * Gets default page
-     *
-     * Default page for PHPReporty
-     *
-     * @param array $values The parameters or objects.
-     */
-	public static function db_page_test($id) 
-	{
-		$sql = "SELECT * FROM user WHERE id_user = ?";
-   		$data = self::$conn['dbs']['pdo']->fetchAssoc($sql, array((int) $id));
-
-   		print "<pre>";print_r($data);print "</pre>";
-		exit;
-	}
-
-	/**
-     * Creates report template
-     *
-     * @param string $reportType Type of report to generate
-     * @param array $reportData Array data, or SQL
-     * @param array $param Additional parameters in the report
-     * @return array $report Generated sql table result
-     */
-	public function createReport($reportType='', $reportData=array(), $param=array()) 
-	{
-		echo 'Report Created! You can modify and edit the report here.----';
-		exit;
 	}
 
 	/**
@@ -237,20 +241,25 @@ class PhpReporty {
     		'twig.path' => self::$config['template_dir']
 		));
 
+		// Get the url
+		$url = explode("/", $_SERVER['REQUEST_URI']);
+		$url = isset($url[1]) ? $url[1] : false;
+		$url = !empty($url) ? $url : false; 
+
 		$default = array(
-			'base'=>'http://localhost/phpreporty',
-			'path'=>'http://localhost/phpreporty',
-			'report_list_url'=>'http://localhost/phpreporty/',
-			'request'=>'',
-			'querystring'=>$_SERVER['QUERY_STRING'],
-			'config'=>self::$config,
-			'environment'=>'',
-			'recent_reports'=>'',
+			'base'=> $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/'.$url,
+			'path'=> $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/'.$url,
+			'report_list_url'=> $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/'.$url,
+			'request'=> '',
+			'querystring'=> $_SERVER['QUERY_STRING'],
+			'config'=> self::$config,
+			'environment'=> '',
+			'recent_reports'=> '',
 			'session'=>'',
-			'theme'=>self::$config['bootstrap_theme'],
-			'error'=>'',
-			'reports'=>'',
-			'report_errors'=>'',
+			'theme'=> self::$config['bootstrap_theme'],
+			'error'=> '',
+			'reports'=> '',
+			'report_errors'=> '',
 			'notice'=>''
 		);
 
